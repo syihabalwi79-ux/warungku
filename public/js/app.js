@@ -1,0 +1,541 @@
+const productList = document.getElementById("product-list");
+const productForm = document.getElementById("product-form");
+const productCategory = document.getElementById("product-category");
+const totalProducts = document.getElementById("total-products");
+
+const categoryList = document.getElementById("category-list");
+
+
+// ==============================
+// FORMAT RUPIAH
+// ==============================
+
+function formatRupiah(number) {
+    return new Intl.NumberFormat("id-ID", {
+        style: "currency",
+        currency: "IDR",
+        minimumFractionDigits: 0
+    }).format(number);
+}
+
+
+// ==============================
+// LOAD PRODUCTS
+// ==============================
+
+async function loadProducts() {
+
+    try {
+
+        const response = await fetch("/api/products");
+
+        const products = await response.json();
+
+        renderProducts(products);
+
+    } catch (error) {
+
+        console.error("Gagal mengambil data produk:", error);
+
+    }
+}
+
+
+// ==============================
+// RENDER PRODUCTS
+// ==============================
+
+function renderProducts(products) {
+
+    productList.innerHTML = "";
+
+    totalProducts.textContent = products.length;
+
+    products.forEach(product => {
+
+        const productCard = document.createElement("div");
+
+        productCard.className = "card";
+
+        productCard.innerHTML = `
+            <h3>${product.nama}</h3>
+
+            <p>
+                Kategori:
+                ${product.category_name ?? "Tanpa kategori"}
+            </p>
+
+            <p>
+                Harga:
+                ${formatRupiah(product.price)}
+            </p>
+
+            <p>
+                Stok:
+                ${product.stock}
+            </p>
+
+            <button onclick="editProduct(${product.id})">
+                Edit
+            </button>
+
+            <button onclick="deleteProduct(${product.id})">
+                Hapus
+            </button>
+        `;
+
+        productList.appendChild(productCard);
+
+    });
+}
+
+
+// ==============================
+// LOAD CATEGORIES
+// ==============================
+
+async function loadCategories() {
+
+    try {
+
+        const response = await fetch("/api/categories");
+
+        const categories = await response.json();
+
+        renderCategories(categories);
+        renderCategoryManagement(categories);
+
+    } catch (error) {
+
+        console.error("Gagal mengambil data kategori:", error);
+
+    }
+}
+
+
+// ==============================
+// RENDER CATEGORY DROPDOWN
+// ==============================
+
+function renderCategories(categories) {
+
+    productCategory.innerHTML = `
+        <option value="">
+            Pilih kategori
+        </option>
+    `;
+
+    categories.forEach(category => {
+
+        const option = document.createElement("option");
+
+        option.value = category.id;
+
+        option.textContent = category.nama;
+
+        productCategory.appendChild(option);
+
+    });
+}
+
+
+// ==============================
+// RENDER CATEGORY MANAGEMENT
+// ==============================
+
+function renderCategoryManagement(categories) {
+
+    categoryList.innerHTML = "";
+
+    categories.forEach(category => {
+
+        const categoryItem = document.createElement("div");
+
+        categoryItem.className = "category-item";
+
+        categoryItem.innerHTML = `
+    <span>${category.nama}</span>
+
+    <button onclick="editCategory(${category.id})">
+        Edit
+    </button>
+
+    <button onclick="deleteCategory(${category.id})">
+        Hapus
+    </button>
+`;
+
+        categoryList.appendChild(categoryItem);
+
+    });
+}
+
+
+// ==============================
+// TAMBAH PRODUCT
+// ==============================
+
+productForm.addEventListener("submit", async function(event) {
+
+    event.preventDefault();
+
+    const name = document.getElementById("product-name").value;
+    const category_id = document.getElementById("product-category").value;
+    const price = document.getElementById("product-price").value;
+    const stock = document.getElementById("product-stock").value;
+
+    try {
+
+        const response = await fetch("/api/products", {
+
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+                name: name,
+                price: Number(price),
+                stock: Number(stock),
+                category_id: Number(category_id)
+            })
+
+        });
+
+        if (!response.ok) {
+
+            throw new Error("Gagal menambahkan produk");
+
+        }
+
+        productForm.reset();
+
+        await loadProducts();
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert("Gagal menambahkan produk");
+
+    }
+
+});
+
+
+// ==============================
+// EDIT PRODUCT
+// ==============================
+
+async function editProduct(id) {
+
+    try {
+
+        const response = await fetch("/api/products");
+
+        const products = await response.json();
+
+        const product = products.find(item => item.id === id);
+
+        if (!product) {
+
+            alert("Produk tidak ditemukan");
+
+            return;
+
+        }
+
+        const newName = prompt(
+            "Nama produk:",
+            product.nama
+        );
+
+        if (newName === null) return;
+
+
+        const newPrice = prompt(
+            "Harga:",
+            product.price
+        );
+
+        if (newPrice === null) return;
+
+
+        const newStock = prompt(
+            "Stok:",
+            product.stock
+        );
+
+        if (newStock === null) return;
+
+
+        const newCategory = prompt(
+            "ID kategori:",
+            product.category_id ?? ""
+        );
+
+        if (newCategory === null) return;
+
+
+        await fetch(`/api/products/${id}`, {
+
+            method: "PUT",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+
+                name: newName,
+
+                price: Number(newPrice),
+
+                stock: Number(newStock),
+
+                category_id: Number(newCategory)
+
+            })
+
+        });
+
+
+        await loadProducts();
+
+    } catch (error) {
+
+        console.error("Gagal mengedit produk:", error);
+
+    }
+
+}
+
+
+// ==============================
+// DELETE PRODUCT
+// ==============================
+
+async function deleteProduct(id) {
+
+    const confirmation = confirm(
+        "Yakin ingin menghapus produk ini?"
+    );
+
+    if (!confirmation) return;
+
+
+    try {
+
+        await fetch(`/api/products/${id}`, {
+
+            method: "DELETE"
+
+        });
+
+        await loadProducts();
+
+    } catch (error) {
+
+        console.error("Gagal menghapus produk:", error);
+
+    }
+
+}
+
+// ==============================
+// EDIT CATEGORY
+// ==============================
+
+async function editCategory(id) {
+
+    try {
+
+        const response = await fetch("/api/categories");
+
+        const categories = await response.json();
+
+        const category = categories.find(
+            item => item.id === id
+        );
+
+        if (!category) {
+
+            alert("Kategori tidak ditemukan");
+
+            return;
+
+        }
+
+
+        const newName = prompt(
+            "Nama kategori:",
+            category.nama
+        );
+
+        if (newName === null) return;
+
+        if (newName.trim() === "") {
+
+            alert("Nama kategori tidak boleh kosong");
+
+            return;
+
+        }
+
+
+        const updateResponse = await fetch(
+            `/api/categories/${id}`,
+            {
+                method: "PUT",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+                    nama: newName
+                })
+            }
+        );
+
+
+        if (!updateResponse.ok) {
+
+            throw new Error(
+                "Gagal mengubah kategori"
+            );
+
+        }
+
+
+        await loadCategories();
+
+    } catch (error) {
+
+        console.error(
+            "Gagal mengedit kategori:",
+            error
+        );
+
+        alert("Gagal mengedit kategori");
+
+    }
+
+}
+
+// ==============================
+// DELETE CATEGORY
+// ==============================
+
+async function deleteCategory(id) {
+
+    const confirmation = confirm(
+        "Yakin ingin menghapus kategori ini?"
+    );
+
+    if (!confirmation) return;
+
+
+    try {
+
+        const response = await fetch(`/api/categories/${id}`, {
+
+            method: "DELETE"
+
+        });
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Gagal menghapus kategori"
+            );
+
+        }
+
+        await loadCategories();
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert(
+            "Kategori gagal dihapus. Pastikan kategori tidak sedang digunakan oleh produk."
+        );
+
+    }
+
+}
+
+
+// ==============================
+// TAMBAH CATEGORY
+// ==============================
+
+const categoryForm =
+    document.getElementById("category-form");
+
+categoryForm.addEventListener(
+    "submit",
+    async function(event) {
+
+        event.preventDefault();
+
+        const categoryName =
+            document.getElementById("category-name").value;
+
+
+        try {
+
+            const response = await fetch(
+                "/api/categories",
+                {
+
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        nama: categoryName
+                    })
+
+                }
+            );
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Gagal menambahkan kategori"
+                );
+
+            }
+
+
+            categoryForm.reset();
+
+            await loadCategories();
+
+        } catch (error) {
+
+            console.error(error);
+
+            alert(
+                "Gagal menambahkan kategori"
+            );
+
+        }
+
+    }
+);
+
+
+// ==============================
+// LOAD DATA SAAT HALAMAN DIBUKA
+// ==============================
+
+loadCategories();
+
+loadProducts();
