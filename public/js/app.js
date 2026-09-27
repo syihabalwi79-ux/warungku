@@ -861,61 +861,58 @@ function calculateTransactionTotal() {
             ".transaction-item"
         );
 
-
     let total = 0;
 
+    transactionItems.forEach(item => {
 
-    transactionItems.forEach(
-        item => {
+        const productSelect =
+            item.querySelector(
+                ".transaction-product"
+            );
 
-            const productSelect =
-                item.querySelector(
-                    ".transaction-product"
-                );
+        const quantityInput =
+            item.querySelector(
+                ".transaction-quantity"
+            );
 
-            const quantityInput =
-                item.querySelector(
-                    ".transaction-quantity"
-                );
+        const productId =
+            Number(productSelect.value);
 
+        const quantity =
+            Number(quantityInput.value);
 
-            const productId =
-                Number(
-                    productSelect.value
-                );
+        const product =
+            transactionProducts.find(
+                product =>
+                    product.id === productId
+            );
 
+        if (!product || quantity <= 0) {
+            return;
+        }
 
-            const quantity =
-                Number(
-                    quantityInput.value
-                );
+        // ==============================
+        // VALIDASI STOK
+        // ==============================
 
+        if (quantity > product.stock) {
 
-            const product =
-                transactionProducts.find(
-                    product =>
-                        product.id ===
-                        productId
-                );
+            quantityInput.setCustomValidity(
+                `Stok ${product.nama} hanya ${product.stock}.`
+            );
 
+            quantityInput.reportValidity();
 
-            if (
-                !product ||
-                quantity <= 0
-            ) {
-
-                return;
-
-            }
-
-
-            total +=
-                product.price *
-                quantity;
+            return;
 
         }
-    );
 
+        quantityInput.setCustomValidity("");
+
+        total +=
+            product.price * quantity;
+
+    });
 
     transactionTotal.textContent =
         formatRupiah(total);
@@ -1169,6 +1166,60 @@ if (transactionForm) {
                     ".transaction-item"
                 );
 
+                let stockIsValid = true;
+
+                transactionItems.forEach(item => {
+                
+                    const productSelect =
+                        item.querySelector(
+                            ".transaction-product"
+                        );
+                
+                    const quantityInput =
+                        item.querySelector(
+                            ".transaction-quantity"
+                        );
+                
+                    const productId =
+                        Number(productSelect.value);
+                
+                    const quantity =
+                        Number(quantityInput.value);
+                
+                    const product =
+                        transactionProducts.find(
+                            product =>
+                                product.id === productId
+                        );
+                
+                    if (
+                        product &&
+                        quantity > product.stock
+                    ) {
+                
+                        quantityInput.setCustomValidity(
+                            `Stok ${product.nama} hanya ${product.stock}.`
+                        );
+                
+                        stockIsValid = false;
+                
+                    } else {
+                
+                        quantityInput.setCustomValidity("");
+                
+                    }
+                
+                });
+                
+                
+                if (!stockIsValid) {
+                
+                    transactionForm.reportValidity();
+                
+                    return;
+                
+                }
+
 
             const items = [];
 
@@ -1264,6 +1315,7 @@ if (transactionForm) {
                 if (!response.ok) {
 
                     throw new Error(
+                        data.error ||
                         data.message ||
                         "Gagal menyimpan transaksi"
                     );
