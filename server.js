@@ -394,6 +394,139 @@ app.delete("/api/categories/:id", async (req, res) => {
     }
 });
 
+app.post("/api/transactions", async (req, res) => {
+    const client = await pool.connect();
+
+    try {
+        const { items } = req.body;
+
+        // Pastikan ada barang yang dibeli
+        if (!items || items.length === 0) {
+            return res.status(400).json({
+                error: "Transaksi harus memiliki minimal satu produk"
+            });
+        }
+
+        // Mulai database transaction
+        await client.query("BEGIN");
+
+        let total = 0;
+        const transactionItems = [];
+
+        // Ambil data setiap produk
+        for (const item of items) {
+
+            const productResult = await client.query(
+                `SELECT id, nama, price, stock
+                 FROM products
+                 WHERE id = $1
+                 FOR UPDATE`,
+                [item.product_id]
+            );
+
+            if (productResult.rows.length === 0) {
+                throw new Error(
+                    `Produk dengan ID ${item.product_id} tidak ditemukan`
+                );
+            }
+
+            const product = productResult.rows[0];
+
+            const quantity = Number(item.quantity);
+
+            // Validasi jumlah
+            if (!Number.isInteger(quantity) || quantity <= 0) {
+                throw new Error(
+                    `Jumlah produk ${product.nama} tidak valid`
+                );
+            }
+
+            // Pastikan stok mencukupi
+            if (product.stock < quantity) {
+                throw new Error(
+                    `Stok ${product.nama} tidak mencukupi`
+                );
+            }
+
+            const subtotal = product.price * quantity;
+
+            total += subtotal;
+
+            transactionItems.push({
+                product_id: product.id,
+                quantity: quantity,
+                price: product.price,
+                subtotal: subtotal
+            });
+        }
+
+        // Simpan transaksi utama
+        const transactionResult = await client.query(
+            `INSERT INTO transactions (total)
+             VALUES ($1)
+             RETURNING *`,
+            [total]
+        );
+
+        const transaction = transactionResult.rows[0];
+
+        // Simpan detail transaksi dan kurangi stok
+        for (const item of transactionItems) {
+
+            await client.query(
+                `INSERT INTO transaction_details
+                 (transaction_id, product_id, quantity, price, subtotal)
+                 VALUES ($1, $2, $3, $4, $5)`,
+                [
+                    transaction.id,
+                    item.product_id,
+                    item.quantity,
+                    item.price,
+                    item.subtotal
+                ]
+            );
+
+            await client.query(
+                `UPDATE products
+                 SET stock = stock - $1
+                 WHERE id = $2`,
+                [
+                    item.quantity,
+                    item.product_id
+                ]
+            );
+        }
+
+        // Semua proses berhasil
+        await client.query("COMMIT");
+
+        res.status(201).json({
+            message: "Transaksi berhasil dibuat",
+            transaction: transaction,
+            items: transactionItems
+        });
+
+    } catch (error) {
+
+        // Batalkan semua perubahan jika terjadi error
+        await client.query("ROLLBACK");
+
+        console.error(
+            "Gagal membuat transaksi:",
+            error.message
+        );
+
+        res.status(400).json({
+            error: error.message
+        });
+
+    } finally {
+
+        client.release();
+
+    }
+});
+
 // ==============================
 // MENJALANKAN SERVER
 // ==============================

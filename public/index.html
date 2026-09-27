@@ -1,5 +1,7 @@
+```html
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,133 +13,303 @@
 
 <body>
 
-<header class="navbar">
-    <h1>WarungKu</h1>
+    <!-- ==============================
+         NAVBAR
+         ============================== -->
 
-    <nav>
-        <a href="#">Dashboard</a>
-        <a href="#">Produk</a>
-        <a href="#">Transaksi</a>
-    </nav>
-</header>
+    <header class="navbar">
 
+        <h1>WarungKu</h1>
 
-<main class="container">
+        <nav>
+            <a href="#">Dashboard</a>
+            <a href="#">Produk</a>
+            <a href="#">Transaksi</a>
+        </nav>
 
-    <!-- DASHBOARD -->
-    <section class="welcome">
-        <h2>Dashboard</h2>
-        <p>Selamat datang di sistem manajemen WarungKu.</p>
-    </section>
+    </header>
 
 
-    <!-- RINGKASAN -->
-    <section class="summary">
+    <main class="container">
 
-        <div class="card">
-            <h3>Total Produk</h3>
-            <p id="total-products">0</p>
-        </div>
+        <!-- ==============================
+             DASHBOARD
+             ============================== -->
 
-        <div class="card">
-            <h3>Total Penjualan</h3>
-            <p>Rp 0</p>
-        </div>
+        <section class="welcome">
 
-        <div class="card">
-            <h3>Transaksi Hari Ini</h3>
-            <p>0</p>
-        </div>
+            <h2>Dashboard</h2>
 
-    </section>
+            <p>
+                Selamat datang di sistem manajemen WarungKu.
+            </p>
+
+        </section>
 
 
-    <!-- TAMBAH PRODUK -->
-    <section class="add-product">
+        <!-- ==============================
+             RINGKASAN
+             ============================== -->
 
-        <h2>Tambah Produk</h2>
+        <section class="summary">
 
-        <form id="product-form">
+            <div class="card">
 
-            <input
-                type="text"
-                id="product-name"
-                placeholder="Nama produk"
-                required
-            >
+                <h3>Total Produk</h3>
 
-            <select id="product-category" required>
-                <option value="">Pilih kategori</option>
-            </select>
+                <p id="total-products">
+                    0
+                </p>
 
-            <input
-                type="number"
-                id="product-price"
-                placeholder="Harga"
-                min="0"
-                required
-            >
-
-            <input
-                type="number"
-                id="product-stock"
-                placeholder="Stok"
-                min="0"
-                required
-            >
-
-            <button type="submit">
-                Tambah Produk
-            </button>
-
-        </form>
-
-    </section>
+            </div>
 
 
-    <!-- KELOLA KATEGORI -->
-    <section class="categories">
+            <div class="card">
 
-        <h2>Kelola Kategori</h2>
+                <h3>Total Kategori</h3>
 
-        <div id="category-list">
-            <!-- Daftar kategori akan muncul di sini -->
-        </div>
+                <p id="total-categories">
+                    0
+                </p>
 
-
-        <h3>Tambah Kategori</h3>
-
-        <form id="category-form">
-
-            <input
-                type="text"
-                id="category-name"
-                placeholder="Nama kategori"
-                required
-            >
-
-            <button type="submit">
-                Tambah Kategori
-            </button>
-
-        </form>
-
-    </section>
+            </div>
 
 
-    <!-- DAFTAR PRODUK -->
-    <section class="products">
+            <div class="card">
 
-        <h2>Daftar Produk</h2>
+                <h3>Total Nilai Stok</h3>
 
-        <div id="product-list"></div>
+                <p id="total-stock-value">
+                    Rp 0
+                </p>
 
-    </section>
+            </div>
 
-</main>
+        </section>
 
 
-<script src="js/app.js"></script>
+        <!-- ==============================
+             TAMBAH PRODUK
+             ============================== -->
+
+        <section class="add-product">
+
+            <h2>Tambah Produk</h2>
+
+            <form id="product-form">
+
+                <input
+                    type="text"
+                    id="product-name"
+                    placeholder="Nama produk"
+                    required
+                >
+
+
+                <select
+                    id="product-category"
+                    required
+                >
+
+                    <option value="">
+                        Pilih kategori
+                    </option>
+
+                </select>
+
+
+                <input
+                    type="number"
+                    id="product-price"
+                    placeholder="Harga"
+                    min="0"
+                    required
+                >
+
+
+                <input
+                    type="number"
+                    id="product-stock"
+                    placeholder="Stok"
+                    min="0"
+                    required
+                >
+
+
+                <button type="submit">
+                    Tambah Produk
+                </button>
+
+            </form>
+
+        </section>
+
+
+        <!-- ==============================
+             KELOLA KATEGORI
+             ============================== -->
+
+        <section class="categories">
+
+            <h2>Kelola Kategori</h2>
+
+
+            <div id="category-list">
+                <!--
+                    Daftar kategori akan
+                    dibuat oleh JavaScript.
+                -->
+            </div>
+
+
+            <h3>Tambah Kategori</h3>
+
+
+            <form id="category-form">
+
+                <input
+                    type="text"
+                    id="category-name"
+                    placeholder="Nama kategori"
+                    required
+                >
+
+
+                <button type="submit">
+                    Tambah Kategori
+                </button>
+
+            </form>
+
+        </section>
+
+
+        <!-- ==============================
+             TRANSAKSI PENJUALAN
+             ============================== -->
+
+        <section class="transactions">
+
+            <h2>Transaksi Penjualan</h2>
+
+
+            <form id="transaction-form">
+
+
+                <!--
+                    Semua item transaksi
+                    akan berada di dalam
+                    container ini.
+                -->
+
+                <div id="transaction-items">
+
+
+                    <!-- ITEM TRANSAKSI PERTAMA -->
+
+                    <div class="transaction-item">
+
+
+                        <select
+                            class="transaction-product"
+                            required
+                        >
+
+                            <option value="">
+                                Pilih produk
+                            </option>
+
+                        </select>
+
+
+                        <input
+                            type="number"
+                            class="transaction-quantity"
+                            min="1"
+                            value="1"
+                            aria-label="Jumlah produk"
+                            required
+                        >
+
+
+                        <button
+                            type="button"
+                            class="remove-transaction-item"
+                        >
+                            Hapus
+                        </button>
+
+
+                    </div>
+
+                </div>
+
+
+                <!-- TAMBAH ITEM TRANSAKSI -->
+
+                <button
+                    type="button"
+                    id="add-transaction-item"
+                >
+                    + Tambah Produk
+                </button>
+
+
+                <!-- TOTAL TRANSAKSI -->
+
+                <div class="transaction-total">
+
+                    <strong>
+                        Total:
+                    </strong>
+
+
+                    <span id="transaction-total">
+                        Rp 0
+                    </span>
+
+                </div>
+
+
+                <!-- SIMPAN TRANSAKSI -->
+
+                <button type="submit">
+                    Simpan Transaksi
+                </button>
+
+
+            </form>
+
+        </section>
+
+
+        <!-- ==============================
+             DAFTAR PRODUK
+             ============================== -->
+
+        <section class="products">
+
+            <h2>Daftar Produk</h2>
+
+
+            <div id="product-list">
+                <!--
+                    Daftar produk akan
+                    dibuat oleh JavaScript.
+                -->
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- ==============================
+         JAVASCRIPT
+         ============================== -->
+
+    <script src="js/app.js"></script>
 
 </body>
+
 </html>
