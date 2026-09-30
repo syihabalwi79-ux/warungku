@@ -2282,3 +2282,15 @@ if (
 } else {
     showPage("dashboard");
 }
+
+window.addEventListener("hashchange", function () {
+    const page = window.location.hash.replace("#", "");
+
+    if (
+        page === "dashboard" ||
+        page === "products" ||
+        page === "transactions"
+    ) {
+        showPage(page);
+    }
+});
