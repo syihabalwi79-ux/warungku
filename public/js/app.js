@@ -2201,6 +2201,7 @@ async function loadTransactionDetail(
 }
 
 function showPage(pageName) {
+    
     pageSections.forEach(section => {
         const pages = section.dataset.page.split(" ");
 
@@ -2240,16 +2241,31 @@ function showPage(pageName) {
 
 navDashboard.addEventListener("click", function (event) {
     event.preventDefault();
+
+    if (window.location.hash === "#dashboard") {
+        return;
+    }
+
     showPage("dashboard");
 });
 
 navProducts.addEventListener("click", function (event) {
     event.preventDefault();
+
+    if (window.location.hash === "#products") {
+        return;
+    }
+
     showPage("products");
 });
 
 navTransactions.addEventListener("click", function (event) {
     event.preventDefault();
+
+    if (window.location.hash === "#transactions") {
+        return;
+    }
+
     showPage("transactions");
 });
 
