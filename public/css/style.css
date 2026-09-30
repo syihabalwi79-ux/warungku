@@ -288,3 +288,100 @@ button:hover {
    #product-list .card button:last-of-type {
        background-color: #b42318;
    }
+
+   /* ============================= */
+/* TRANSACTION HISTORY */
+/* ============================= */
+
+.transaction-history {
+    margin-top: 30px;
+}
+
+.transaction-history-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+
+    padding: 16px;
+    margin-bottom: 10px;
+
+    border: 1px solid #ddd;
+    border-radius: 10px;
+
+    background-color: #fff;
+
+    transition: 0.2s;
+}
+
+.transaction-history-item:hover {
+    transform: translateY(-2px);
+}
+
+.transaction-history-item p {
+    margin: 5px 0 0;
+    font-size: 14px;
+}
+
+/* ============================= */
+/* TRANSACTION DETAIL */
+/* ============================= */
+
+.transaction-detail {
+    padding: 18px;
+    margin: -5px 0 15px;
+
+    border: 1px solid #ddd;
+    border-top: none;
+    border-radius: 0 0 10px 10px;
+
+    background-color: #f8f8f8;
+}
+
+.transaction-detail h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+
+.transaction-detail-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    gap: 20px;
+
+    padding: 12px 0;
+
+    border-bottom: 1px solid #ddd;
+}
+
+.transaction-detail-item p {
+    margin: 5px 0 0;
+    font-size: 14px;
+}
+
+.transaction-detail-total {
+    display: flex;
+    justify-content: space-between;
+
+    margin-top: 15px;
+    padding-top: 15px;
+
+    border-top: 2px solid #ccc;
+}
+
+/* ============================= */
+/* MOBILE */
+/* ============================= */
+
+@media (max-width: 600px) {
+
+    .transaction-history-item {
+        align-items: flex-start;
+    }
+
+    .transaction-detail-item {
+        align-items: flex-start;
+    }
+
+}
