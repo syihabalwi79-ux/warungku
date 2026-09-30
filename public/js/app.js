@@ -340,6 +340,238 @@ async function loadLowStock() {
     }
 }
 
+async function loadSalesChart() {
+
+    const chartContainer =
+        document.getElementById(
+            "sales-chart-container"
+        );
+
+    if (!chartContainer) {
+        return;
+    }
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/dashboard/sales-chart"
+            );
+
+        if (!response.ok) {
+            throw new Error(
+                "Gagal mengambil data grafik penjualan"
+            );
+        }
+
+        const salesData =
+            await response.json();
+
+        chartContainer.innerHTML = "";
+
+        if (salesData.length === 0) {
+
+            chartContainer.innerHTML = `
+                <p>
+                    Belum ada data penjualan dalam 7 hari terakhir.
+                </p>
+            `;
+
+            return;
+        }
+
+        const canvas =
+            document.createElement("canvas");
+
+        canvas.width = 700;
+        canvas.height = 350;
+
+        chartContainer.appendChild(canvas);
+
+        const ctx =
+            canvas.getContext("2d");
+
+        const width = canvas.width;
+        const height = canvas.height;
+
+        const padding = 50;
+
+        const chartWidth =
+            width - padding * 2;
+
+        const chartHeight =
+            height - padding * 2;
+
+        const maxRevenue =
+            Math.max(
+                ...salesData.map(
+                    item => item.revenue
+                ),
+                1
+            );
+
+        /* Garis sumbu Y */
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            padding,
+            padding
+        );
+
+        ctx.lineTo(
+            padding,
+            height - padding
+        );
+
+        ctx.lineTo(
+            width - padding,
+            height - padding
+        );
+
+        ctx.stroke();
+
+        /* Garis grafik */
+
+        ctx.beginPath();
+
+        salesData.forEach(
+            (item, index) => {
+
+                const x =
+                    padding +
+                    (
+                        index /
+                        Math.max(
+                            salesData.length - 1,
+                            1
+                        )
+                    ) *
+                    chartWidth;
+
+                const y =
+                    height -
+                    padding -
+                    (
+                        item.revenue /
+                        maxRevenue
+                    ) *
+                    chartHeight;
+
+                if (index === 0) {
+
+                    ctx.moveTo(
+                        x,
+                        y
+                    );
+
+                } else {
+
+                    ctx.lineTo(
+                        x,
+                        y
+                    );
+
+                }
+
+            }
+        );
+
+        ctx.stroke();
+
+        /* Titik grafik */
+
+        salesData.forEach(
+            (item, index) => {
+
+                const x =
+                    padding +
+                    (
+                        index /
+                        Math.max(
+                            salesData.length - 1,
+                            1
+                        )
+                    ) *
+                    chartWidth;
+
+                const y =
+                    height -
+                    padding -
+                    (
+                        item.revenue /
+                        maxRevenue
+                    ) *
+                    chartHeight;
+
+                ctx.beginPath();
+
+                ctx.arc(
+                    x,
+                    y,
+                    5,
+                    0,
+                    Math.PI * 2
+                );
+
+                ctx.fill();
+
+                /* Label tanggal */
+
+                const date =
+                    new Date(
+                        item.date
+                    );
+
+                const dateLabel =
+                    date.toLocaleDateString(
+                        "id-ID",
+                        {
+                            day: "2-digit",
+                            month: "2-digit"
+                        }
+                    );
+
+                ctx.font =
+                    "12px Arial";
+
+                ctx.textAlign =
+                    "center";
+
+                ctx.fillText(
+                    dateLabel,
+                    x,
+                    height - 25
+                );
+
+                /* Label omzet */
+
+                ctx.fillText(
+                    formatRupiah(
+                        item.revenue
+                    ),
+                    x,
+                    y - 10
+                );
+
+            }
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Gagal memuat grafik penjualan:",
+            error
+        );
+
+        chartContainer.innerHTML = `
+            <p>
+                Gagal memuat grafik penjualan.
+            </p>
+        `;
+    }
+}
+
 // ==============================
 // LOAD PRODUCTS FOR TRANSACTION
 // ==============================
@@ -1980,6 +2212,8 @@ loadTopProducts();
 loadTodaySales();
 
 loadLowStock();
+
+loadSalesChart();
 
 if (firstTransactionItem) {
 

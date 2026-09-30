@@ -826,6 +826,44 @@ app.get("/api/dashboard/low-stock", async (req, res) => {
     }
 });
 
+app.get("/api/dashboard/sales-chart", async (req, res) => {
+    try {
+
+        const result = await pool.query(`
+            SELECT
+                DATE(created_at) AS date,
+                COALESCE(SUM(total), 0) AS revenue,
+                COUNT(*) AS total_transactions
+            FROM transactions
+            WHERE created_at >= CURRENT_DATE - INTERVAL '6 days'
+              AND created_at < CURRENT_DATE + INTERVAL '1 day'
+            GROUP BY DATE(created_at)
+            ORDER BY DATE(created_at) ASC
+        `);
+
+        res.json(
+            result.rows.map(row => ({
+                date: row.date,
+                revenue: Number(row.revenue),
+                total_transactions: Number(
+                    row.total_transactions
+                )
+            }))
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Gagal mengambil data grafik penjualan:",
+            error
+        );
+
+        res.status(500).json({
+            error: "Gagal mengambil data grafik penjualan"
+        });
+    }
+});
+
 
 // ==============================
 // MENJALANKAN SERVER
