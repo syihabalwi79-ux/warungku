@@ -527,6 +527,156 @@ app.post("/api/transactions", async (req, res) => {
     }
 });
 
+
+// ==============================
+// GET RIWAYAT TRANSAKSI
+// ==============================
+
+app.get("/api/transactions", async (req, res) => {
+
+    try {
+
+        const result = await pool.query(`
+            SELECT
+                id,
+                created_at,
+                total
+            FROM transactions
+            ORDER BY created_at DESC
+        `);
+
+        res.json(result.rows);
+
+    } catch (error) {
+
+        console.error(
+            "Gagal mengambil riwayat transaksi:",
+            error
+        );
+
+        res.status(500).json({
+            error:
+                "Gagal mengambil riwayat transaksi"
+        });
+
+    }
+
+});
+
+// ==============================
+// GET DETAIL TRANSAKSI
+// ==============================
+
+app.get("/api/transactions/:id", async (req, res) => {
+
+    const transactionId =
+        Number(req.params.id);
+
+    if (!Number.isInteger(transactionId)) {
+
+        return res.status(400).json({
+            error: "ID transaksi tidak valid"
+        });
+
+    }
+
+    try {
+
+        const result = await pool.query(
+            `
+            SELECT
+                t.id AS transaction_id,
+                t.created_at,
+                t.total,
+
+                td.product_id,
+                td.quantity,
+                td.price,
+
+                p.nama AS product_name
+
+            FROM transactions t
+
+            JOIN transaction_details td
+                ON td.transaction_id = t.id
+
+            JOIN products p
+                ON p.id = td.product_id
+
+            WHERE t.id = $1
+
+            ORDER BY td.id ASC
+            `,
+            [transactionId]
+        );
+
+
+        if (result.rows.length === 0) {
+
+            return res.status(404).json({
+                error:
+                    "Transaksi tidak ditemukan"
+            });
+
+        }
+
+
+        const transaction = {
+
+            id:
+                result.rows[0].transaction_id,
+
+            created_at:
+                result.rows[0].created_at,
+
+            total:
+                result.rows[0].total,
+
+            items:
+                result.rows.map(row => ({
+
+                    product_id:
+                        row.product_id,
+
+                    product_name:
+                        row.product_name,
+
+                    quantity:
+                        row.quantity,
+
+                    price:
+                        row.price,
+
+                    subtotal:
+                        Number(row.price) *
+                        Number(row.quantity)
+
+                }))
+
+        };
+
+
+        res.json(transaction);
+
+
+    } catch (error) {
+
+        console.error(
+            "Gagal mengambil detail transaksi:",
+            error
+        );
+
+
+        res.status(500).json({
+            error:
+                "Gagal mengambil detail transaksi"
+        });
+
+    }
+
+});
+
+
 // ==============================
 // MENJALANKAN SERVER
 // ==============================

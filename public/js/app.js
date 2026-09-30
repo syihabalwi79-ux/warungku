@@ -1367,6 +1367,8 @@ if (transactionForm) {
 
                 await loadTransactionProducts();
 
+                await loadTransactionHistory();
+
 
             } catch (error) {
 
@@ -1389,6 +1391,292 @@ if (transactionForm) {
 }
 
 // ==============================
+// LOAD RIWAYAT TRANSAKSI
+// ==============================
+
+async function loadTransactionHistory() {
+
+    const historyList =
+        document.getElementById(
+            "transaction-history-list"
+        );
+
+    if (!historyList) {
+        return;
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/transactions"
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Gagal mengambil riwayat transaksi"
+            );
+
+        }
+
+
+        const transactions =
+            await response.json();
+
+
+        historyList.innerHTML = "";
+
+
+        if (transactions.length === 0) {
+
+            historyList.innerHTML = `
+                <p>
+                    Belum ada transaksi.
+                </p>
+            `;
+
+            return;
+
+        }
+
+
+        transactions.forEach(
+            transaction => {
+
+                const transactionItem =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                transactionItem.className =
+                    "transaction-history-item";
+
+
+                const date =
+                    new Date(
+                        transaction.created_at
+                    );
+
+
+                const formattedDate =
+                    date.toLocaleString(
+                        "id-ID"
+                    );
+
+
+                transactionItem.innerHTML = `
+
+                    <div>
+
+                        <strong>
+                            Transaksi #${transaction.id}
+                        </strong>
+
+                        <p>
+                            ${formattedDate}
+                        </p>
+
+                    </div>
+
+
+                    <strong>
+                        ${formatRupiah(
+                            transaction.total
+                        )}
+                    </strong>
+
+                `;
+
+
+                /*
+                 * Membuat transaksi
+                 * bisa diklik.
+                 */
+
+                transactionItem.style.cursor =
+                    "pointer";
+
+
+                transactionItem.addEventListener(
+                    "click",
+                    function() {
+
+                        loadTransactionDetail(
+                            transaction.id,
+                            transactionItem
+                        );
+
+                    }
+                );
+
+
+                historyList.appendChild(
+                    transactionItem
+                );
+
+            }
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Gagal memuat riwayat transaksi:",
+            error
+        );
+
+
+        historyList.innerHTML = `
+            <p>
+                Gagal memuat riwayat transaksi.
+            </p>
+        `;
+
+    }
+
+}
+
+async function loadTransactionDetail(
+    transactionId,
+    transactionElement
+) {
+
+    try {
+
+        const existingDetail =
+            transactionElement.nextElementSibling;
+
+
+        /*
+         * Kalau detail sedang terbuka,
+         * klik lagi untuk menutupnya.
+         */
+
+        if (
+            existingDetail &&
+            existingDetail.classList.contains(
+                "transaction-detail"
+            )
+        ) {
+
+            existingDetail.remove();
+
+            return;
+
+        }
+
+
+        const response =
+            await fetch(
+                `/api/transactions/${transactionId}`
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Gagal mengambil detail transaksi"
+            );
+
+        }
+
+
+        const transaction =
+            await response.json();
+
+
+        const detail =
+            document.createElement(
+                "div"
+            );
+
+
+        detail.className =
+            "transaction-detail";
+
+
+        detail.innerHTML = `
+
+            <h3>
+                Detail Transaksi #${transaction.id}
+            </h3>
+
+
+            <div class="transaction-detail-items">
+
+                ${transaction.items.map(item => `
+
+                    <div class="transaction-detail-item">
+
+                        <div>
+
+                            <strong>
+                                ${item.product_name}
+                            </strong>
+
+                            <p>
+                                ${item.quantity}
+                                ×
+                                ${formatRupiah(item.price)}
+                            </p>
+
+                        </div>
+
+
+                        <strong>
+                            ${formatRupiah(item.subtotal)}
+                        </strong>
+
+                    </div>
+
+                `).join("")}
+
+            </div>
+
+
+            <div class="transaction-detail-total">
+
+                <strong>
+                    Total
+                </strong>
+
+                <strong>
+                    ${formatRupiah(
+                        transaction.total
+                    )}
+                </strong>
+
+            </div>
+
+        `;
+
+
+        transactionElement.after(
+            detail
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Gagal memuat detail transaksi:",
+            error
+        );
+
+
+        alert(
+            "Gagal mengambil detail transaksi"
+        );
+
+    }
+
+}
+
+// ==============================
 // LOAD DATA SAAT HALAMAN DIBUKA
 // ==============================
 
@@ -1397,6 +1685,8 @@ loadCategories();
 loadProducts();
 
 loadTransactionProducts();
+
+loadTransactionHistory();
 
 if (firstTransactionItem) {
 
