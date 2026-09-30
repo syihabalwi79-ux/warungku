@@ -385,3 +385,23 @@ button:hover {
     }
 
 }
+
+/* ============================= */
+/* SALES CHART */
+/* ============================= */
+
+.sales-chart {
+    margin-top: 30px;
+}
+
+#sales-chart-container {
+    width: 100%;
+    overflow-x: auto;
+    padding: 15px 0;
+}
+
+#sales-chart-container canvas {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
