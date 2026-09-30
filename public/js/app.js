@@ -2217,32 +2217,26 @@ function showPage(pageName) {
 
     if (pageName === "dashboard") {
         navDashboard.classList.add("active");
+        document.title = "WarungKu - Dashboard";
     }
 
     if (pageName === "products") {
         navProducts.classList.add("active");
+        document.title = "WarungKu - Produk";
     }
 
     if (pageName === "transactions") {
         navTransactions.classList.add("active");
-    }
-    if (pageName === "dashboard") {
-        document.title = "WarungKu - Dashboard";
-    }
-    
-    if (pageName === "products") {
-        document.title = "WarungKu - Produk";
-    }
-    
-    if (pageName === "transactions") {
         document.title = "WarungKu - Transaksi";
     }
-}
 
-window.scrollTo({
-    top: 0,
-    behavior: "smooth"
-});
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+
+    window.location.hash = pageName;
+}
 
 navDashboard.addEventListener("click", function (event) {
     event.preventDefault();
@@ -2259,34 +2253,32 @@ navTransactions.addEventListener("click", function (event) {
     showPage("transactions");
 });
 
-showPage("dashboard");
+
 
 // ==============================
 // LOAD DATA SAAT HALAMAN DIBUKA
 // ==============================
 
+// load data
 loadCategories();
-
 loadProducts();
-
 loadTransactionProducts();
-
 loadTransactionHistory();
-
 loadDashboardStatistics();
-
 loadTopProducts();
-
 loadTodaySales();
-
 loadLowStock();
-
 loadSalesChart();
 
-if (firstTransactionItem) {
+// tentukan halaman awal berdasarkan URL
+const initialPage = window.location.hash.replace("#", "");
 
-    setupTransactionItemEvents(
-        firstTransactionItem
-    );
-
+if (
+    initialPage === "dashboard" ||
+    initialPage === "products" ||
+    initialPage === "transactions"
+) {
+    showPage(initialPage);
+} else {
+    showPage("dashboard");
 }
