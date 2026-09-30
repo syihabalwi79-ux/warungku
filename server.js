@@ -713,6 +713,45 @@ app.get("/api/dashboard", async (req, res) => {
     }
 });
 
+app.get("/api/dashboard/top-products", async (req, res) => {
+    try {
+
+        const result = await pool.query(`
+            SELECT
+                p.id,
+                p.nama,
+                SUM(td.quantity) AS total_sold
+            FROM transaction_details td
+            JOIN products p
+                ON p.id = td.product_id
+            GROUP BY p.id, p.nama
+            ORDER BY total_sold DESC
+            LIMIT 5
+        `);
+
+        res.json(
+            result.rows.map(product => ({
+                id: product.id,
+                nama: product.nama,
+                total_sold: Number(
+                    product.total_sold
+                )
+            }))
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Gagal mengambil produk terlaris:",
+            error
+        );
+
+        res.status(500).json({
+            error: "Gagal mengambil produk terlaris"
+        });
+    }
+});
+
 
 // ==============================
 // MENJALANKAN SERVER

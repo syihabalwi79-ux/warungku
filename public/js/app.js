@@ -112,6 +112,90 @@ async function loadDashboardStatistics() {
     }
 }
 
+async function loadTopProducts() {
+
+    const topProductsList =
+        document.getElementById(
+            "top-products-list"
+        );
+
+    if (!topProductsList) {
+        return;
+    }
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/dashboard/top-products"
+            );
+
+        if (!response.ok) {
+            throw new Error(
+                "Gagal mengambil produk terlaris"
+            );
+        }
+
+        const products =
+            await response.json();
+
+        topProductsList.innerHTML = "";
+
+        if (products.length === 0) {
+
+            topProductsList.innerHTML = `
+                <p>
+                    Belum ada data penjualan.
+                </p>
+            `;
+
+            return;
+        }
+
+        products.forEach(
+            (product, index) => {
+
+                const productItem =
+                    document.createElement(
+                        "div"
+                    );
+
+                productItem.className =
+                    "top-product-item";
+
+                productItem.innerHTML = `
+                    <div>
+                        <strong>
+                            ${index + 1}. ${product.nama}
+                        </strong>
+                    </div>
+
+                    <strong>
+                        ${product.total_sold} terjual
+                    </strong>
+                `;
+
+                topProductsList.appendChild(
+                    productItem
+                );
+            }
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Gagal memuat produk terlaris:",
+            error
+        );
+
+        topProductsList.innerHTML = `
+            <p>
+                Gagal memuat produk terlaris.
+            </p>
+        `;
+    }
+}
+
 // ==============================
 // LOAD PRODUCTS FOR TRANSACTION
 // ==============================
@@ -1746,6 +1830,8 @@ loadTransactionProducts();
 loadTransactionHistory();
 
 loadDashboardStatistics();
+
+loadTopProducts();
 
 if (firstTransactionItem) {
 
