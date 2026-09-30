@@ -752,6 +752,46 @@ app.get("/api/dashboard/top-products", async (req, res) => {
     }
 });
 
+app.get("/api/dashboard/today", async (req, res) => {
+    try {
+
+        const result = await pool.query(`
+            SELECT
+                COUNT(DISTINCT t.id) AS total_transactions,
+                COALESCE(SUM(t.total), 0) AS total_revenue,
+                COALESCE(SUM(td.quantity), 0) AS total_items_sold
+            FROM transactions t
+            LEFT JOIN transaction_details td
+                ON td.transaction_id = t.id
+            WHERE t.created_at >= CURRENT_DATE
+              AND t.created_at < CURRENT_DATE + INTERVAL '1 day'
+        `);
+
+        res.json({
+            total_transactions: Number(
+                result.rows[0].total_transactions
+            ),
+            total_revenue: Number(
+                result.rows[0].total_revenue
+            ),
+            total_items_sold: Number(
+                result.rows[0].total_items_sold
+            )
+        });
+
+    } catch (error) {
+
+        console.error(
+            "Gagal mengambil statistik hari ini:",
+            error
+        );
+
+        res.status(500).json({
+            error: "Gagal mengambil statistik hari ini"
+        });
+    }
+});
+
 
 // ==============================
 // MENJALANKAN SERVER

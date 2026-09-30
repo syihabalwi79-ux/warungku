@@ -112,6 +112,66 @@ async function loadDashboardStatistics() {
     }
 }
 
+async function loadTodaySales() {
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/dashboard/today"
+            );
+
+        if (!response.ok) {
+            throw new Error(
+                "Gagal mengambil statistik hari ini"
+            );
+        }
+
+        const data =
+            await response.json();
+
+        const todayTransactions =
+            document.getElementById(
+                "today-transactions"
+            );
+
+        const todayRevenue =
+            document.getElementById(
+                "today-revenue"
+            );
+
+        const todayItemsSold =
+            document.getElementById(
+                "today-items-sold"
+            );
+
+        if (todayTransactions) {
+            todayTransactions.textContent =
+                data.total_transactions;
+        }
+
+        if (todayRevenue) {
+            todayRevenue.textContent =
+                formatRupiah(
+                    data.total_revenue
+                );
+        }
+
+        if (todayItemsSold) {
+            todayItemsSold.textContent =
+                data.total_items_sold;
+        }
+
+    } catch (error) {
+
+        console.error(
+            "Gagal memuat statistik hari ini:",
+            error
+        );
+
+    }
+}
+
 async function loadTopProducts() {
 
     const topProductsList =
@@ -1832,6 +1892,8 @@ loadTransactionHistory();
 loadDashboardStatistics();
 
 loadTopProducts();
+
+loadTodaySales();
 
 if (firstTransactionItem) {
 
