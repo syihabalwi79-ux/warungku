@@ -256,6 +256,90 @@ async function loadTopProducts() {
     }
 }
 
+async function loadLowStock() {
+
+    const lowStockList =
+        document.getElementById(
+            "low-stock-list"
+        );
+
+    if (!lowStockList) {
+        return;
+    }
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/dashboard/low-stock"
+            );
+
+        if (!response.ok) {
+            throw new Error(
+                "Gagal mengambil data stok menipis"
+            );
+        }
+
+        const products =
+            await response.json();
+
+        lowStockList.innerHTML = "";
+
+        if (products.length === 0) {
+
+            lowStockList.innerHTML = `
+                <p>
+                    Tidak ada produk dengan stok menipis.
+                </p>
+            `;
+
+            return;
+        }
+
+        products.forEach(
+            product => {
+
+                const productItem =
+                    document.createElement(
+                        "div"
+                    );
+
+                productItem.className =
+                    "low-stock-item";
+
+                productItem.innerHTML = `
+                    <div>
+                        <strong>
+                            ${product.nama}
+                        </strong>
+                    </div>
+
+                    <strong>
+                        ${product.stock} stok
+                    </strong>
+                `;
+
+                lowStockList.appendChild(
+                    productItem
+                );
+            }
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Gagal memuat stok menipis:",
+            error
+        );
+
+        lowStockList.innerHTML = `
+            <p>
+                Gagal memuat data stok.
+            </p>
+        `;
+    }
+}
+
 // ==============================
 // LOAD PRODUCTS FOR TRANSACTION
 // ==============================
@@ -1894,6 +1978,8 @@ loadDashboardStatistics();
 loadTopProducts();
 
 loadTodaySales();
+
+loadLowStock();
 
 if (firstTransactionItem) {
 

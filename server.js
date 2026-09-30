@@ -792,6 +792,40 @@ app.get("/api/dashboard/today", async (req, res) => {
     }
 });
 
+app.get("/api/dashboard/low-stock", async (req, res) => {
+    try {
+
+        const result = await pool.query(`
+            SELECT
+                id,
+                nama,
+                stock
+            FROM products
+            WHERE stock <= 5
+            ORDER BY stock ASC, nama ASC
+        `);
+
+        res.json(
+            result.rows.map(product => ({
+                id: product.id,
+                nama: product.nama,
+                stock: Number(product.stock)
+            }))
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Gagal mengambil data stok menipis:",
+            error
+        );
+
+        res.status(500).json({
+            error: "Gagal mengambil data stok menipis"
+        });
+    }
+});
+
 
 // ==============================
 // MENJALANKAN SERVER
