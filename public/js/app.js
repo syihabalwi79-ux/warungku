@@ -1,5 +1,12 @@
 const productList = document.getElementById("product-list");
 const productForm = document.getElementById("product-form");
+
+const navDashboard = document.getElementById("nav-dashboard");
+const navProducts = document.getElementById("nav-products");
+const navTransactions = document.getElementById("nav-transactions");
+
+const pageSections = document.querySelectorAll("[data-page]");
+
 const productCategory = document.getElementById("product-category");
 const totalProducts = document.getElementById("total-products");
 const totalCategories = document.getElementById("total-categories");
@@ -2192,6 +2199,67 @@ async function loadTransactionDetail(
     }
 
 }
+
+function showPage(pageName) {
+    pageSections.forEach(section => {
+        const pages = section.dataset.page.split(" ");
+
+        if (pages.includes(pageName)) {
+            section.style.display = "";
+        } else {
+            section.style.display = "none";
+        }
+    });
+
+    navDashboard.classList.remove("active");
+    navProducts.classList.remove("active");
+    navTransactions.classList.remove("active");
+
+    if (pageName === "dashboard") {
+        navDashboard.classList.add("active");
+    }
+
+    if (pageName === "products") {
+        navProducts.classList.add("active");
+    }
+
+    if (pageName === "transactions") {
+        navTransactions.classList.add("active");
+    }
+    if (pageName === "dashboard") {
+        document.title = "WarungKu - Dashboard";
+    }
+    
+    if (pageName === "products") {
+        document.title = "WarungKu - Produk";
+    }
+    
+    if (pageName === "transactions") {
+        document.title = "WarungKu - Transaksi";
+    }
+}
+
+window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+});
+
+navDashboard.addEventListener("click", function (event) {
+    event.preventDefault();
+    showPage("dashboard");
+});
+
+navProducts.addEventListener("click", function (event) {
+    event.preventDefault();
+    showPage("products");
+});
+
+navTransactions.addEventListener("click", function (event) {
+    event.preventDefault();
+    showPage("transactions");
+});
+
+showPage("dashboard");
 
 // ==============================
 // LOAD DATA SAAT HALAMAN DIBUKA

@@ -21,9 +21,17 @@
         <h1>WarungKu</h1>
 
         <nav>
-            <a href="#">Dashboard</a>
-            <a href="#">Produk</a>
-            <a href="#">Transaksi</a>
+            <a href="#" id="nav-dashboard">
+                Dashboard
+            </a>
+
+            <a href="#" id="nav-products">
+                Produk
+            </a>
+
+            <a href="#" id="nav-transactions">
+                Transaksi
+            </a>
         </nav>
 
     </header>
@@ -31,11 +39,15 @@
 
     <main class="container">
 
+
         <!-- ==============================
              DASHBOARD
              ============================== -->
 
-        <section class="welcome">
+        <section
+            class="welcome"
+            data-page="dashboard"
+        >
 
             <h2>Dashboard</h2>
 
@@ -50,7 +62,10 @@
              RINGKASAN
              ============================== -->
 
-        <section class="summary">
+        <section
+            class="summary"
+            data-page="dashboard"
+        >
 
             <div class="card">
 
@@ -84,78 +99,280 @@
 
             </div>
 
+
             <div class="card">
+
                 <h3>Total Transaksi</h3>
-                <p id="total-transactions">0</p>
+
+                <p id="total-transactions">
+                    0
+                </p>
+
             </div>
-            
+
+
             <div class="card">
+
                 <h3>Total Omzet</h3>
-                <p id="total-revenue">Rp0</p>
+
+                <p id="total-revenue">
+                    Rp 0
+                </p>
+
             </div>
-            
+
+
             <div class="card">
+
                 <h3>Barang Terjual</h3>
-                <p id="total-items-sold">0</p>
+
+                <p id="total-items-sold">
+                    0
+                </p>
+
             </div>
 
-        </section>
-
-        <section class="top-products">
-            <h2>Produk Terlaris</h2>
-        
-            <div id="top-products-list">
-                <p>Memuat produk terlaris...</p>
-            </div>
-
-            <section class="today-sales">
-                <h2>Penjualan Hari Ini</h2>
-            
-                <div class="today-sales-summary">
-            
-                    <div class="summary-card">
-                        <h3>Transaksi Hari Ini</h3>
-                        <p id="today-transactions">0</p>
-                    </div>
-            
-                    <div class="summary-card">
-                        <h3>Omzet Hari Ini</h3>
-                        <p id="today-revenue">Rp0</p>
-                    </div>
-            
-                    <div class="summary-card">
-                        <h3>Barang Terjual Hari Ini</h3>
-                        <p id="today-items-sold">0</p>
-                    </div>
-            
-                </div>
-
-        </section>
-        
-        <section class="low-stock">
-            <h2>Stok Menipis</h2>
-        
-            <div id="low-stock-list">
-                <p>Memuat data stok...</p>
-            </div>
-        </section>
-        
-        <section class="sales-chart">
-            <h2>Penjualan 7 Hari Terakhir</h2>
-        
-            <div id="sales-chart-container">
-                <p>Memuat grafik penjualan...</p>
-            </div>
         </section>
 
 
         <!-- ==============================
-             TAMBAH PRODUK
+             PRODUK TERLARIS
+             Dashboard + Produk
              ============================== -->
 
-        <section class="add-product">
+        <section
+            class="top-products"
+            data-page="dashboard products"
+        >
 
-            <h2>Tambah Produk</h2>
+            <h2>Produk Terlaris</h2>
+
+            <div id="top-products-list">
+
+                <p>
+                    Memuat produk terlaris...
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- ==============================
+             PENJUALAN HARI INI
+             Dashboard
+             ============================== -->
+
+        <section
+            class="today-sales"
+            data-page="dashboard"
+        >
+
+            <h2>Penjualan Hari Ini</h2>
+
+            <div class="today-sales-summary">
+
+                <div class="summary-card">
+
+                    <h3>
+                        Transaksi Hari Ini
+                    </h3>
+
+                    <p id="today-transactions">
+                        0
+                    </p>
+
+                </div>
+
+
+                <div class="summary-card">
+
+                    <h3>
+                        Omzet Hari Ini
+                    </h3>
+
+                    <p id="today-revenue">
+                        Rp 0
+                    </p>
+
+                </div>
+
+
+                <div class="summary-card">
+
+                    <h3>
+                        Barang Terjual Hari Ini
+                    </h3>
+
+                    <p id="today-items-sold">
+                        0
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ==============================
+             STOK MENIPIS
+             Dashboard + Produk
+             ============================== -->
+
+        <section
+            class="low-stock"
+            data-page="dashboard products"
+        >
+
+            <h2>Stok Menipis</h2>
+
+            <div id="low-stock-list">
+
+                <p>
+                    Memuat data stok...
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- ==============================
+             GRAFIK PENJUALAN
+             Dashboard
+             ============================== -->
+
+        <section
+            class="sales-chart"
+            data-page="dashboard"
+        >
+
+            <h2>
+                Penjualan 7 Hari Terakhir
+            </h2>
+
+            <div id="sales-chart-container">
+
+                <p>
+                    Memuat grafik penjualan...
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- ==============================
+             TRANSAKSI PENJUALAN
+             Dashboard
+             ============================== -->
+
+        <section
+            class="transactions"
+            data-page="dashboard"
+        >
+
+            <h2>
+                Transaksi Penjualan
+            </h2>
+
+
+            <form id="transaction-form">
+
+
+                <!-- ITEM TRANSAKSI -->
+
+                <div id="transaction-items">
+
+
+                    <!-- ITEM TRANSAKSI PERTAMA -->
+
+                    <div class="transaction-item">
+
+                        <select
+                            class="transaction-product"
+                            required
+                        >
+
+                            <option value="">
+                                Pilih produk
+                            </option>
+
+                        </select>
+
+
+                        <input
+                            type="number"
+                            class="transaction-quantity"
+                            min="1"
+                            value="1"
+                            aria-label="Jumlah produk"
+                            required
+                        >
+
+
+                        <button
+                            type="button"
+                            class="remove-transaction-item"
+                        >
+                            Hapus
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- TAMBAH ITEM -->
+
+                <button
+                    type="button"
+                    id="add-transaction-item"
+                >
+                    + Tambah Produk
+                </button>
+
+
+                <!-- TOTAL -->
+
+                <div class="transaction-total">
+
+                    <strong>
+                        Total:
+                    </strong>
+
+                    <span id="transaction-total">
+                        Rp 0
+                    </span>
+
+                </div>
+
+
+                <!-- SIMPAN -->
+
+                <button type="submit">
+                    Simpan Transaksi
+                </button>
+
+
+            </form>
+
+        </section>
+
+
+        <!-- ==============================
+             PRODUK
+             ============================== -->
+
+        <section
+            class="add-product"
+            data-page="products"
+        >
+
+            <h2>
+                Tambah Produk
+            </h2>
 
             <form id="product-form">
 
@@ -207,12 +424,17 @@
 
 
         <!-- ==============================
-             KELOLA KATEGORI
+             KATEGORI
              ============================== -->
 
-        <section class="categories">
+        <section
+            class="categories"
+            data-page="products"
+        >
 
-            <h2>Kelola Kategori</h2>
+            <h2>
+                Kelola Kategori
+            </h2>
 
 
             <div id="category-list">
@@ -223,7 +445,9 @@
             </div>
 
 
-            <h3>Tambah Kategori</h3>
+            <h3>
+                Tambah Kategori
+            </h3>
 
 
             <form id="category-form">
@@ -246,111 +470,17 @@
 
 
         <!-- ==============================
-             TRANSAKSI PENJUALAN
-             ============================== -->
-
-        <section class="transactions">
-
-            <h2>Transaksi Penjualan</h2>
-
-
-            <form id="transaction-form">
-
-
-                <!--
-                    Semua item transaksi
-                    akan berada di dalam
-                    container ini.
-                -->
-
-                <div id="transaction-items">
-
-
-                    <!-- ITEM TRANSAKSI PERTAMA -->
-
-                    <div class="transaction-item">
-
-
-                        <select
-                            class="transaction-product"
-                            required
-                        >
-
-                            <option value="">
-                                Pilih produk
-                            </option>
-
-                        </select>
-
-
-                        <input
-                            type="number"
-                            class="transaction-quantity"
-                            min="1"
-                            value="1"
-                            aria-label="Jumlah produk"
-                            required
-                        >
-
-
-                        <button
-                            type="button"
-                            class="remove-transaction-item"
-                        >
-                            Hapus
-                        </button>
-
-
-                    </div>
-
-                </div>
-
-
-                <!-- TAMBAH ITEM TRANSAKSI -->
-
-                <button
-                    type="button"
-                    id="add-transaction-item"
-                >
-                    + Tambah Produk
-                </button>
-
-
-                <!-- TOTAL TRANSAKSI -->
-
-                <div class="transaction-total">
-
-                    <strong>
-                        Total:
-                    </strong>
-
-
-                    <span id="transaction-total">
-                        Rp 0
-                    </span>
-
-                </div>
-
-
-                <!-- SIMPAN TRANSAKSI -->
-
-                <button type="submit">
-                    Simpan Transaksi
-                </button>
-
-
-            </form>
-
-        </section>
-
-
-        <!-- ==============================
              DAFTAR PRODUK
              ============================== -->
 
-        <section class="products">
+        <section
+            class="products"
+            data-page="products"
+        >
 
-            <h2>Daftar Produk</h2>
+            <h2>
+                Daftar Produk
+            </h2>
 
 
             <div id="product-list">
@@ -364,14 +494,27 @@
 
 
         <!-- ==============================
-            RIWAYAT TRANSAKSI
-            ============================== -->
-        <section class="transaction-history">
-            <h2>Riwayat Transaksi</h2>
+             RIWAYAT TRANSAKSI
+             ============================== -->
+
+        <section
+            class="transaction-history"
+            data-page="transactions"
+        >
+
+            <h2>
+                Riwayat Transaksi
+            </h2>
+
             <div id="transaction-history-list">
-                <!-- Riwayat transaksi akan muncul di sini -->
+                <!--
+                    Riwayat transaksi akan
+                    muncul di sini.
+                -->
             </div>
+
         </section>
+
 
     </main>
 

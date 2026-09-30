@@ -590,3 +590,7 @@ button:hover {
     max-width: 100%;
     height: auto;
 }
+
+.navbar nav a.active {
+    font-weight: bold;
+}
