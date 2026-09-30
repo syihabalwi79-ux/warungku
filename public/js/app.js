@@ -54,6 +54,63 @@ async function loadProducts() {
 
 }
 
+async function loadDashboardStatistics() {
+
+    try {
+
+        const response =
+            await fetch("/api/dashboard");
+
+        if (!response.ok) {
+            throw new Error(
+                "Gagal mengambil statistik dashboard"
+            );
+        }
+
+        const data =
+            await response.json();
+
+        const totalTransactions =
+            document.getElementById(
+                "total-transactions"
+            );
+
+        const totalRevenue =
+            document.getElementById(
+                "total-revenue"
+            );
+
+        const totalItemsSold =
+            document.getElementById(
+                "total-items-sold"
+            );
+
+        if (totalTransactions) {
+            totalTransactions.textContent =
+                data.total_transactions;
+        }
+
+        if (totalRevenue) {
+            totalRevenue.textContent =
+                formatRupiah(
+                    data.total_revenue
+                );
+        }
+
+        if (totalItemsSold) {
+            totalItemsSold.textContent =
+                data.total_items_sold;
+        }
+
+    } catch (error) {
+
+        console.error(
+            "Gagal memuat statistik dashboard:",
+            error
+        );
+
+    }
+}
 
 // ==============================
 // LOAD PRODUCTS FOR TRANSACTION
@@ -1687,6 +1744,8 @@ loadProducts();
 loadTransactionProducts();
 
 loadTransactionHistory();
+
+loadDashboardStatistics();
 
 if (firstTransactionItem) {
 
